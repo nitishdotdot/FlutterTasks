@@ -61,7 +61,13 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Todo')),
+      appBar: AppBar(
+        title: Text('Add Todo'),
+        leading: IconButton(
+          onPressed: () => getTodo(context),
+          icon: Icon(Icons.refresh),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
