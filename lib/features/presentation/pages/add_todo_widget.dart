@@ -63,6 +63,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Todo'),
+        centerTitle: true,
         leading: IconButton(
           onPressed: () => getTodo(context),
           icon: Icon(Icons.refresh),
@@ -71,23 +72,29 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text('Add Todo'),
-            TextFormField(
-              controller: title,
-              decoration: InputDecoration(
-                labelText: 'title',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            SizedBox(height: 10),
+            SizedBox(
+              width: 320,
+              child: TextFormField(
+                controller: title,
+                decoration: InputDecoration(
+                  labelText: 'title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 10),
-            TextFormField(
-              controller: description,
-              decoration: InputDecoration(
-                labelText: 'description',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            SizedBox(
+              width: 320,
+              child: TextFormField(
+                controller: description,
+                decoration: InputDecoration(
+                  labelText: 'description',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -97,12 +104,21 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
               },
               child: Text('Add'),
             ),
-            for (int i = 0; i < x.length; i++)
-              ListTile(
-                leading: Text('${i + 1}'),
-                title: Text(x[i]['title']),
-                subtitle: Text(x[i]['description']),
+            SizedBox(
+              width: 320,
+              child: Card(
+                child: Column(
+                  children: [
+                    for (int i = 0; i < x.length; i++)
+                      ListTile(
+                        leading: Text('${i + 1}'),
+                        title: Text(x[i]['title']),
+                        subtitle: Text(x[i]['description']),
+                      ),
+                  ],
+                ),
               ),
+            ),
           ],
         ),
       ),
