@@ -50,6 +50,8 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
       ).showSnackBar(SnackBar(content: Text(stringResponse)));
     }
     getTodo(context);
+    title?.text = '';
+    description?.text = '';
   }
 
   @override
@@ -112,15 +114,17 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                   child: Column(
                     children: [
                       for (int i = 0; i < x.length; i++)
-                        ListTile(
-                          leading: Text('${i + 1}'),
-                          title: Text(
-                            x[i]['title'],
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          subtitle: Text(
-                            x[i]['description'],
-                            style: TextStyle(color: Colors.purpleAccent),
+                        Card(
+                          child: ListTile(
+                            leading: Text('${i + 1}'),
+                            title: Text(
+                              x[i]['title'],
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                            subtitle: Text(
+                              x[i]['description'],
+                              style: TextStyle(color: Colors.purpleAccent),
+                            ),
                           ),
                         ),
                     ],
