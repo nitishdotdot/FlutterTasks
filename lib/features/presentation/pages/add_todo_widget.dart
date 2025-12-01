@@ -3,6 +3,7 @@ import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
 import 'package:clean_architecture/features/domain/usecases/add_todo.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_architecture/features/domain/usecases/get_all_todo.dart';
+import 'package:clean_architecture/features/domain/usecases/delete_todo.dart';
 
 class AddTodoWidget extends StatefulWidget {
   const AddTodoWidget({super.key});
@@ -15,7 +16,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   TextEditingController? title = TextEditingController();
   TextEditingController? description = TextEditingController();
   List x = [];
-
+  String id = '';
   Future<void> getTodo(BuildContext context) async {
     final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
     GetAllTodo(repo);
@@ -52,6 +53,18 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     getTodo(context);
     title?.text = '';
     description?.text = '';
+  }
+
+  Future<void> deleteThisTodo(BuildContext context, String id) async {
+    final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
+    final DeleteTodo todoUsecase = DeleteTodo(repo);
+    final String stringReponse = await todoUsecase(id);
+    if (stringReponse == "Failure") {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failure')));
+    }
+    getTodo(context);
   }
 
   @override
@@ -124,6 +137,13 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                             subtitle: Text(
                               x[i]['description'],
                               style: TextStyle(color: Colors.purpleAccent),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                deleteThisTodo(context, x[i]["_id"]);
+                              },
+                              icon: Icon(Icons.delete),
+                              color: Colors.red,
                             ),
                           ),
                         ),

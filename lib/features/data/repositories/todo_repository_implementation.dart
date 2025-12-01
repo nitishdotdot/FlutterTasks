@@ -38,4 +38,21 @@ class TodoRepositoryImplementation extends TodoRepository {
       return ['failure'];
     }
   }
+
+  @override
+  Future<String> deleteTodo(String id) async {
+    String baseUrl1 = '$baseUrl/$id';
+    final url = Uri.parse(baseUrl1);
+    final body = jsonEncode({"_id": id});
+    final response = await http.delete(
+      url,
+      body: body,
+      headers: {"Content-Type": "application/json"},
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return "Success";
+    } else {
+      return "Failure";
+    }
+  }
 }
