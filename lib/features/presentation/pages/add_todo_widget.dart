@@ -106,16 +106,25 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
             ),
             SizedBox(
               width: 320,
-              child: Card(
-                child: Column(
-                  children: [
-                    for (int i = 0; i < x.length; i++)
-                      ListTile(
-                        leading: Text('${i + 1}'),
-                        title: Text(x[i]['title']),
-                        subtitle: Text(x[i]['description']),
-                      ),
-                  ],
+              child: Center(
+                child: Card(
+                  color: const Color.fromARGB(127, 151, 223, 211),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < x.length; i++)
+                        ListTile(
+                          leading: Text('${i + 1}'),
+                          title: Text(
+                            x[i]['title'],
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                          subtitle: Text(
+                            x[i]['description'],
+                            style: TextStyle(color: Colors.purpleAccent),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
