@@ -28,11 +28,11 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     } else {
       setState(() {
         x = data;
-        if (x.isEmpty) {
-          x = [
-            {"title": "---", "description": "---"},
-          ];
-        }
+        // if (x.isEmpty) {
+        //   x = [
+        //     {"title": "---", "description": "---"},
+        //   ];
+        // }
       });
     }
   }
@@ -59,8 +59,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     description?.text = '';
   }
 
-  Future<void> deleteThisTodo(BuildContext context, String id) async {
-    refresh(context);
+  Future<void> deleteThisTodo(BuildContext context, String id, int i) async {
     final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
     final DeleteTodo todoUsecase = DeleteTodo(repo);
     final String stringReponse = await todoUsecase(id);
@@ -68,14 +67,18 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failure')));
-      refresh(context);
+    } else {
+      setState(() {
+        x.removeAt(i);
+        refresh(context);
+      });
     }
-    refresh(context);
   }
 
   @override
   void initState() {
     super.initState();
+
     getTodo(context);
   }
 
@@ -94,25 +97,25 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
         child: Column(
           children: [
             SizedBox(height: 10),
+            Text('Title'),
             SizedBox(
               width: 320,
               child: TextFormField(
                 controller: title,
                 decoration: InputDecoration(
-                  labelText: 'title',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
             ),
+            Text('Description'),
             SizedBox(height: 10),
             SizedBox(
               width: 320,
               child: TextFormField(
                 controller: description,
                 decoration: InputDecoration(
-                  labelText: 'description',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -138,7 +141,10 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                             leading: Text('${i + 1}'),
                             title: Text(
                               x[i]['title'],
-                              style: TextStyle(color: Colors.blue),
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             subtitle: Text(
                               x[i]['description'],
@@ -146,7 +152,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                             ),
                             trailing: IconButton(
                               onPressed: () {
-                                deleteThisTodo(context, x[i]["_id"]);
+                                deleteThisTodo(context, x[i]["_id"], i);
                               },
                               icon: Icon(Icons.delete),
                               color: Colors.red,
