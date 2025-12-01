@@ -37,6 +37,10 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     }
   }
 
+  void refresh(BuildContext context) {
+    getTodo(context);
+  }
+
   Future<void> addThisTodo(BuildContext context) async {
     final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
     final AddTodo todoUsecase = AddTodo(repo);
@@ -50,12 +54,13 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
         context,
       ).showSnackBar(SnackBar(content: Text(stringResponse)));
     }
-    getTodo(context);
+    refresh(context);
     title?.text = '';
     description?.text = '';
   }
 
   Future<void> deleteThisTodo(BuildContext context, String id) async {
+    refresh(context);
     final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
     final DeleteTodo todoUsecase = DeleteTodo(repo);
     final String stringReponse = await todoUsecase(id);
@@ -63,8 +68,9 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failure')));
+      refresh(context);
     }
-    getTodo(context);
+    refresh(context);
   }
 
   @override
