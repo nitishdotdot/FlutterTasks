@@ -1,9 +1,11 @@
+import 'package:clean_architecture/features/data/data_source/todo_data_source.dart';
 import 'package:clean_architecture/features/data/repositories/todo_repository_implementation.dart';
 import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
 import 'package:clean_architecture/features/domain/usecases/add_todo.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_architecture/features/domain/usecases/get_all_todo.dart';
 import 'package:clean_architecture/features/domain/usecases/delete_todo.dart';
+import 'package:http/http.dart' as http;
 
 class AddTodoWidget extends StatefulWidget {
   const AddTodoWidget({super.key});
@@ -18,7 +20,11 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   List x = [];
   String id = '';
   Future<void> getTodo(BuildContext context) async {
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
+    final client = http.Client();
+    final datasource = TodoDatacource(client);
+    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
+      datasource,
+    );
     GetAllTodo(repo);
     final data = await repo.getAllTodo();
     if (data[0] == "Failure") {
@@ -28,11 +34,6 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     } else {
       setState(() {
         x = data;
-        // if (x.isEmpty) {
-        //   x = [
-        //     {"title": "---", "description": "---"},
-        //   ];
-        // }
       });
     }
   }
@@ -42,7 +43,11 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   }
 
   Future<void> addThisTodo(BuildContext context) async {
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
+    final client = http.Client();
+    final datasource = TodoDatacource(client);
+    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
+      datasource,
+    );
     final AddTodo todoUsecase = AddTodo(repo);
     final todoValue = TodoEntity(
       title: title!.text,
@@ -60,7 +65,11 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   }
 
   Future<void> deleteThisTodo(BuildContext context, String id, int i) async {
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation();
+    final client = http.Client();
+    final datasource = TodoDatacource(client);
+    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
+      datasource,
+    );
     final DeleteTodo todoUsecase = DeleteTodo(repo);
     final String stringReponse = await todoUsecase(id);
     if (stringReponse == "Failure") {
