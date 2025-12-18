@@ -1,4 +1,6 @@
+import 'package:clean_architecture/features/presentation/blocks/todo_block.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/presentation/pages/add_todo_widget.dart';
 
 void main() {
@@ -10,7 +12,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'CleanArchitecture', home: const AddTodoWidget());
+    return MaterialApp(
+      title: 'CleanArchitecture',
+      home: BlocProvider(
+        create: (_) => TodoBlock(),
+        child: const AddTodoWidget(),
+      ),
+    );
   }
 }
 

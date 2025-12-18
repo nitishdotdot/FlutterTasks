@@ -1,9 +1,7 @@
 import 'package:clean_architecture/features/data/models/todo_model.dart';
 import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
 import 'package:clean_architecture/features/domain/repositories/todo_repository.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:clean_architecture/features/data/data_source/todo_data_source.dart';
 
 class TodoRepositoryImplementation extends TodoRepository {
@@ -22,7 +20,7 @@ class TodoRepositoryImplementation extends TodoRepository {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return "Success";
     } else {
-      return "Failure";
+      return "Failure in adding todo";
     }
   }
 
@@ -34,7 +32,7 @@ class TodoRepositoryImplementation extends TodoRepository {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return x;
     } else {
-      return ['failure'];
+      return ['failure in getting todo'];
     }
   }
 

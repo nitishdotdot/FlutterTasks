@@ -1,11 +1,8 @@
-import 'package:clean_architecture/features/data/data_source/todo_data_source.dart';
-import 'package:clean_architecture/features/data/repositories/todo_repository_implementation.dart';
-import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
-import 'package:clean_architecture/features/domain/usecases/add_todo.dart';
+import 'package:clean_architecture/features/presentation/blocks/todo_block.dart';
+import 'package:clean_architecture/features/presentation/blocks/todo_event.dart';
+import 'package:clean_architecture/features/presentation/blocks/todo_state.dart';
 import 'package:flutter/material.dart';
-import 'package:clean_architecture/features/domain/usecases/get_all_todo.dart';
-import 'package:clean_architecture/features/domain/usecases/delete_todo.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddTodoWidget extends StatefulWidget {
   const AddTodoWidget({super.key});
@@ -17,88 +14,21 @@ class AddTodoWidget extends StatefulWidget {
 class _AddTodoWidgetState extends State<AddTodoWidget> {
   TextEditingController? title = TextEditingController();
   TextEditingController? description = TextEditingController();
-  List x = [];
-  String id = '';
-  Future<void> getTodo(BuildContext context) async {
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
-      datasource,
-    );
-    GetAllTodo(repo);
-    final data = await repo.getAllTodo();
-    if (data[0] == "Failure") {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(data[0])));
-    } else {
-      setState(() {
-        x = data;
-      });
-    }
-  }
-
-  void refresh(BuildContext context) {
-    getTodo(context);
-  }
-
-  Future<void> addThisTodo(BuildContext context) async {
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
-      datasource,
-    );
-    final AddTodo todoUsecase = AddTodo(repo);
-    final todoValue = TodoEntity(
-      title: title!.text,
-      description: description!.text,
-    );
-    final String stringResponse = await todoUsecase(todoValue);
-    if (stringResponse == "Failure") {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(stringResponse)));
-    }
-    refresh(context);
+  void resetTextcontrollerfields() {
     title?.text = '';
     description?.text = '';
   }
 
-  Future<void> deleteThisTodo(BuildContext context, String id, int i) async {
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation repo = TodoRepositoryImplementation(
-      datasource,
-    );
-    final DeleteTodo todoUsecase = DeleteTodo(repo);
-    final String stringReponse = await todoUsecase(id);
-    if (stringReponse == "Failure") {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failure')));
-    } else {
-      setState(() {
-        x.removeAt(i);
-        refresh(context);
-      });
-    }
-  }
-
   @override
-  void initState() {
-    super.initState();
-
-    getTodo(context);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final todoBlock = context.read<TodoBlock>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Todo'),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => getTodo(context),
+          onPressed: () => todoBlock.add(GetAllTodoEvent()),
           icon: Icon(Icons.refresh),
         ),
       ),
@@ -133,44 +63,51 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
             ),
             ElevatedButton(
               onPressed: () {
-                addThisTodo(context);
+                todoBlock.add(
+                  AddTodoEvent(
+                    title: title!.text,
+                    description: description!.text,
+                  ),
+                );
+                resetTextcontrollerfields();
               },
               child: Text('Add'),
             ),
-            SizedBox(
-              width: 320,
-              child: Center(
-                child: Card(
-                  color: const Color.fromARGB(127, 151, 223, 211),
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < x.length; i++)
-                        Card(
-                          child: ListTile(
+
+            Card(
+              child: BlocBuilder<TodoBlock, TodoState>(
+                builder: (context, state) {
+                  if (state is TodoInitial) {
+                    todoBlock.add(GetAllTodoEvent());
+                  } else if (state is TodoLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is TodoLoaded) {
+                    final x = state.fetchedTodos;
+                    final todos = List<Map<String, dynamic>>.from(x);
+                    return Container(
+                      height: 1000,
+                      child: ListView.builder(
+                        itemCount: todos.length,
+                        itemBuilder: (BuildContext context, int i) {
+                          return ListTile(
                             leading: Text('${i + 1}'),
-                            title: Text(
-                              x[i]['title'],
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              x[i]['description'],
-                              style: TextStyle(color: Colors.purpleAccent),
-                            ),
+                            title: Text('${todos[i]['title']}'),
+                            subtitle: Text('${todos[i]['description']}'),
                             trailing: IconButton(
                               onPressed: () {
-                                deleteThisTodo(context, x[i]["_id"], i);
+                                todoBlock.add(
+                                  DeleteTodoEvent(id: todos[i]['_id'], i: i),
+                                );
                               },
                               icon: Icon(Icons.delete),
-                              color: Colors.red,
                             ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  return SizedBox();
+                },
               ),
             ),
           ],
