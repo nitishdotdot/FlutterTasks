@@ -1,3 +1,6 @@
+import 'package:clean_architecture/features/presentation/blocks/theme_block.dart';
+import 'package:clean_architecture/features/presentation/blocks/theme_event.dart';
+import 'package:clean_architecture/features/presentation/blocks/theme_state.dart';
 import 'package:clean_architecture/features/presentation/blocks/todo_block.dart';
 import 'package:clean_architecture/features/presentation/blocks/todo_event.dart';
 import 'package:clean_architecture/features/presentation/blocks/todo_state.dart';
@@ -23,6 +26,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   @override
   Widget build(BuildContext context) {
     final todoBlock = context.read<TodoBlock>();
+    final themeBlock = context.read<ThemeBlock>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Todo'),
@@ -31,6 +35,18 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
           onPressed: () => todoBlock.add(GetAllTodoEvent()),
           icon: Icon(Icons.refresh),
         ),
+        actions: [
+          BlocBuilder<ThemeBlock, ThemeState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  themeBlock.add(ChangeTheme());
+                },
+                icon: Icon(Icons.dark_mode),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
