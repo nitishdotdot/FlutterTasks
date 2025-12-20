@@ -49,55 +49,54 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            Text(
-              'Title',
-              style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
-            ),
-            SizedBox(
-              width: 320,
-              child: TextFormField(
-                controller: title,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+      body: Column(
+        children: [
+          SizedBox(height: 10),
+          Text(
+            'Title',
+            style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
+          ),
+          SizedBox(
+            width: 320,
+            child: TextFormField(
+              controller: title,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            Text(
-              'Description',
-              style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: 320,
-              child: TextFormField(
-                controller: description,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+          ),
+          Text(
+            'Description',
+            style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            width: 320,
+            child: TextFormField(
+              controller: description,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                todoBlock.add(
-                  AddTodoEvent(
-                    title: title!.text,
-                    description: description!.text,
-                  ),
-                );
-                resetTextcontrollerfields();
-              },
-              child: Text('Add', style: GoogleFonts.chewy(fontSize: 20)),
-            ),
-
-            Card(
+          ),
+          ElevatedButton(
+            onPressed: () {
+              todoBlock.add(
+                AddTodoEvent(
+                  title: title!.text,
+                  description: description!.text,
+                ),
+              );
+              resetTextcontrollerfields();
+            },
+            child: Text('Add', style: GoogleFonts.chewy(fontSize: 20)),
+          ),
+          Expanded(
+            child: Card(
               child: BlocBuilder<TodoBlock, TodoState>(
                 builder: (context, state) {
                   if (state is TodoInitial) {
@@ -107,50 +106,48 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                   } else if (state is TodoLoaded) {
                     final x = state.fetchedTodos;
                     final todos = List<Map<String, dynamic>>.from(x);
-                    return Container(
-                      height: 1000,
-                      child: ListView.builder(
-                        itemCount: todos.length,
-                        itemBuilder: (BuildContext context, int i) {
-                          return ListTile(
-                            leading: Text(
-                              '${i + 1}',
-                              style: GoogleFonts.chewy(fontSize: 20),
+                    return ListView.builder(
+                      physics: ScrollPhysics(),
+                      itemCount: todos.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        return ListTile(
+                          leading: Text(
+                            '${i + 1}',
+                            style: GoogleFonts.chewy(fontSize: 20),
+                          ),
+                          title: Text(
+                            '${todos[i]['title']}',
+                            style: GoogleFonts.chewy(
+                              color: Colors.deepPurple,
+                              fontSize: 20,
                             ),
-                            title: Text(
-                              '${todos[i]['title']}',
-                              style: GoogleFonts.chewy(
-                                color: Colors.deepPurple,
-                                fontSize: 20,
-                              ),
+                          ),
+                          subtitle: Text(
+                            '${todos[i]['description']}',
+                            style: GoogleFonts.chewy(
+                              color: Colors.green,
+                              fontSize: 20,
                             ),
-                            subtitle: Text(
-                              '${todos[i]['description']}',
-                              style: GoogleFonts.chewy(
-                                color: Colors.green,
-                                fontSize: 20,
-                              ),
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {
-                                todoBlock.add(
-                                  DeleteTodoEvent(id: todos[i]['_id'], i: i),
-                                );
-                              },
-                              icon: Icon(Icons.delete),
-                              color: Colors.red,
-                            ),
-                          );
-                        },
-                      ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              todoBlock.add(
+                                DeleteTodoEvent(id: todos[i]['_id'], i: i),
+                              );
+                            },
+                            icon: Icon(Icons.delete),
+                            color: Colors.red,
+                          ),
+                        );
+                      },
                     );
                   }
                   return SizedBox();
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
