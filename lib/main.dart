@@ -12,24 +12,6 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return BlocBuilder<ThemeBlock, ThemeState>(
-  //     builder: (context, state) {
-  //       return MaterialApp(
-  //         title: 'CleanArchitecture',
-  //         theme: state.isDark == true ? ThemeData.dark() : ThemeData.light(),
-  //         home: MultiBlocProvider(
-  //           providers: [
-  //             BlocProvider(create: (_) => TodoBlock()),
-  //             BlocProvider(create: (_) => ThemeBlock()),
-  //           ],
-  //           child: const AddTodoWidget(),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
