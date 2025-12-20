@@ -6,6 +6,7 @@ import 'package:clean_architecture/features/presentation/blocks/todo_event.dart'
 import 'package:clean_architecture/features/presentation/blocks/todo_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddTodoWidget extends StatefulWidget {
   const AddTodoWidget({super.key});
@@ -29,7 +30,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
     final themeBlock = context.read<ThemeBlock>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Todo'),
+        title: Text('Add Todo', style: GoogleFonts.chewy(fontSize: 20)),
         centerTitle: true,
         leading: IconButton(
           onPressed: () => todoBlock.add(GetAllTodoEvent()),
@@ -52,7 +53,10 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
         child: Column(
           children: [
             SizedBox(height: 10),
-            Text('Title'),
+            Text(
+              'Title',
+              style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
+            ),
             SizedBox(
               width: 320,
               child: TextFormField(
@@ -64,7 +68,10 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                 ),
               ),
             ),
-            Text('Description'),
+            Text(
+              'Description',
+              style: GoogleFonts.chewy(fontSize: 20, color: Colors.deepPurple),
+            ),
             SizedBox(height: 10),
             SizedBox(
               width: 320,
@@ -87,7 +94,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                 );
                 resetTextcontrollerfields();
               },
-              child: Text('Add'),
+              child: Text('Add', style: GoogleFonts.chewy(fontSize: 20)),
             ),
 
             Card(
@@ -106,9 +113,24 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                         itemCount: todos.length,
                         itemBuilder: (BuildContext context, int i) {
                           return ListTile(
-                            leading: Text('${i + 1}'),
-                            title: Text('${todos[i]['title']}'),
-                            subtitle: Text('${todos[i]['description']}'),
+                            leading: Text(
+                              '${i + 1}',
+                              style: GoogleFonts.chewy(fontSize: 20),
+                            ),
+                            title: Text(
+                              '${todos[i]['title']}',
+                              style: GoogleFonts.chewy(
+                                color: Colors.deepPurple,
+                                fontSize: 20,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${todos[i]['description']}',
+                              style: GoogleFonts.chewy(
+                                color: Colors.green,
+                                fontSize: 20,
+                              ),
+                            ),
                             trailing: IconButton(
                               onPressed: () {
                                 todoBlock.add(
@@ -116,6 +138,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                                 );
                               },
                               icon: Icon(Icons.delete),
+                              color: Colors.red,
                             ),
                           );
                         },
