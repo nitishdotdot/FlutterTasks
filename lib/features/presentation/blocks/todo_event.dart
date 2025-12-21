@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 abstract class TodoEvent {}
 
 class AddTodoEvent extends TodoEvent {
@@ -10,8 +8,18 @@ class AddTodoEvent extends TodoEvent {
 
 class DeleteTodoEvent extends TodoEvent {
   String id;
-  int i;
-  DeleteTodoEvent({required this.id, required this.i});
+  DeleteTodoEvent({required this.id});
 }
 
 class GetAllTodoEvent extends TodoEvent {}
+
+class EditTodoEvent extends TodoEvent {
+  final String title;
+  final String description;
+  String id;
+  EditTodoEvent({
+    required this.title,
+    required this.description,
+    required this.id,
+  });
+}

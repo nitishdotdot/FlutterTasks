@@ -26,4 +26,13 @@ class TodoDatacource {
     final response = client.get(Uri.parse(url));
     return response;
   }
+
+  Future<dynamic> editthisTodo(String body, String url) async {
+    final response = client.patch(
+      Uri.parse(url),
+      body: body,
+      headers: {"Content-Type": "Application/Json"},
+    );
+    return response;
+  }
 }

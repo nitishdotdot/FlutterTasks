@@ -18,6 +18,9 @@ class AddTodoWidget extends StatefulWidget {
 class _AddTodoWidgetState extends State<AddTodoWidget> {
   TextEditingController? title = TextEditingController();
   TextEditingController? description = TextEditingController();
+  TextEditingController? editTitle = TextEditingController();
+  TextEditingController? editDescription = TextEditingController();
+  int editingIndex = -1;
   void resetTextcontrollerfields() {
     title?.text = '';
     description?.text = '';
@@ -28,6 +31,7 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
   Widget build(BuildContext context) {
     final todoBlock = context.read<TodoBlock>();
     final themeBlock = context.read<ThemeBlock>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Todo', style: GoogleFonts.chewy(fontSize: 20)),
@@ -110,29 +114,71 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                       physics: ScrollPhysics(),
                       itemCount: todos.length,
                       itemBuilder: (BuildContext context, int i) {
+                        bool isEditable = editingIndex == i;
                         return ListTile(
                           leading: Text(
                             '${i + 1}',
                             style: GoogleFonts.chewy(fontSize: 20),
                           ),
-                          title: Text(
-                            '${todos[i]['title']}',
-                            style: GoogleFonts.chewy(
-                              color: Colors.deepPurple,
-                              fontSize: 20,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '${todos[i]['description']}',
-                            style: GoogleFonts.chewy(
-                              color: Colors.green,
-                              fontSize: 20,
-                            ),
-                          ),
+                          onTap: () {
+                            setState(() {
+                              editTitle?.text = todos[i]['title'];
+                              editDescription?.text = todos[i]['description'];
+                              editingIndex = i;
+                            });
+                          },
+                          title: isEditable
+                              ? TextField(
+                                  controller: editTitle,
+                                  autofocus: true,
+                                  onSubmitted: (String newTitle) {
+                                    setState(() {
+                                      todoBlock.add(
+                                        EditTodoEvent(
+                                          title: editTitle!.text,
+                                          description: editDescription!.text,
+                                          id: todos[i]['_id'],
+                                        ),
+                                      );
+                                      editingIndex = -1;
+                                    });
+                                  },
+                                )
+                              : Text(
+                                  '${todos[i]['title']}',
+                                  style: GoogleFonts.chewy(
+                                    color: Colors.deepPurple,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                          subtitle: isEditable
+                              ? TextField(
+                                  controller: editDescription,
+                                  autofocus: true,
+                                  onSubmitted: (String value) {
+                                    setState(() {
+                                      todoBlock.add(
+                                        EditTodoEvent(
+                                          title: editTitle!.text,
+                                          description: editDescription!.text,
+                                          id: todos[i]['_id'],
+                                        ),
+                                      );
+                                      editingIndex = -1;
+                                    });
+                                  },
+                                )
+                              : Text(
+                                  '${todos[i]['description']}',
+                                  style: GoogleFonts.chewy(
+                                    color: Colors.green,
+                                    fontSize: 20,
+                                  ),
+                                ),
                           trailing: IconButton(
                             onPressed: () {
                               todoBlock.add(
-                                DeleteTodoEvent(id: todos[i]['_id'], i: i),
+                                DeleteTodoEvent(id: todos[i]['_id']),
                               );
                             },
                             icon: Icon(Icons.delete),

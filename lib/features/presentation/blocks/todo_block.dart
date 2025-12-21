@@ -1,5 +1,6 @@
 import 'package:clean_architecture/features/data/data_source/todo_data_source.dart';
 import 'package:clean_architecture/features/data/repositories/todo_repository_implementation.dart';
+import 'package:clean_architecture/features/domain/usecases/edit_todo.dart';
 import 'package:clean_architecture/features/domain/usecases/get_all_todo.dart ';
 import 'package:clean_architecture/features/domain/usecases/add_todo.dart';
 import 'package:clean_architecture/features/domain/usecases/delete_todo.dart';
@@ -14,6 +15,7 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
     on<GetAllTodoEvent>(_onGetAllTodoEvent);
     on<AddTodoEvent>(_onAddTodoEvent);
     on<DeleteTodoEvent>(_onDeleteTodoEvent);
+    on<EditTodoEvent>(_onEditTodoEvent);
   }
   Future<void> _onGetAllTodoEvent(
     GetAllTodoEvent event,
@@ -60,6 +62,26 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
         TodoRepositoryImplementation(datasource);
     final DeleteTodo todoUsecase = DeleteTodo(todoRepositoryImplementation);
     final String stringReponse = await todoUsecase(event.id);
+    final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
+    final fetchedTodos = await getAllTodo();
+    emit(TodoLoaded(fetchedTodos));
+  }
+
+  Future<void> _onEditTodoEvent(
+    EditTodoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final client = http.Client();
+    final datasource = TodoDatacource(client);
+    final TodoRepositoryImplementation todoRepositoryImplementation =
+        TodoRepositoryImplementation(datasource);
+    final EditTodo todoUsecase = EditTodo(todoRepositoryImplementation);
+    final todoValue = TodoEntity(
+      title: event.title,
+      description: event.description,
+    );
+    final String stringReponse = await todoUsecase(todoValue, event.id);
     final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
     final fetchedTodos = await getAllTodo();
     emit(TodoLoaded(fetchedTodos));

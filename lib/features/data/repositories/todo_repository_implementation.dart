@@ -20,7 +20,7 @@ class TodoRepositoryImplementation extends TodoRepository {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return "Success";
     } else {
-      return "Failure in adding todo";
+      return "Failure in Adding  Todo";
     }
   }
 
@@ -32,7 +32,7 @@ class TodoRepositoryImplementation extends TodoRepository {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return x;
     } else {
-      return ['failure in getting todo'];
+      return ['Failure in Getting Todo'];
     }
   }
 
@@ -46,6 +46,22 @@ class TodoRepositoryImplementation extends TodoRepository {
       return "Success";
     } else {
       return "Failure";
+    }
+  }
+
+  @override
+  Future<String> editTodo(TodoEntity todo, String id) async {
+    String baseUrl1 = '$baseUrl/$id';
+    final todoModel = TodoModel(
+      title: todo.title,
+      description: todo.description,
+    );
+    final data = jsonEncode(todoModel.toJson());
+    final response = await todoDatacource.editthisTodo(data, baseUrl1);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return "Success";
+    } else {
+      return "Failure in Updating Todo";
     }
   }
 }
