@@ -17,17 +17,12 @@ class TodoRepositoryImplementation extends TodoRepository {
     );
     final body = jsonEncode(todomodel.toJson());
     await todoDatacource.addthisTodo(baseUrl, body);
-    // if (response.statusCode == 200 || response.statusCode == 201) {
-    //   return "Success";
-    // } else {
-    //   return "Failure in Adding  Todo";
-    // }
   }
 
   @override
   Future<List> getAllTodo() async {
     final response = await todoDatacource.getthisTodo(baseUrl);
-    final data = jsonDecode(response.body);
+    final data = response.data;
     final x = data['data'];
     if (response.statusCode == 200 || response.statusCode == 201) {
       return x;
@@ -42,11 +37,6 @@ class TodoRepositoryImplementation extends TodoRepository {
     final TodoModel todoModel = TodoModel(id: id);
     final body = jsonEncode(todoModel.toJson());
     await todoDatacource.deletethisTodo(baseUrl1, body);
-    // if (response.statusCode == 200 || response.statusCode == 201) {
-    //   return "Success";
-    // } else {
-    //   return "Failure";
-    // }
   }
 
   @override
@@ -58,11 +48,5 @@ class TodoRepositoryImplementation extends TodoRepository {
     );
     final data = jsonEncode(todoModel.toJson());
     await todoDatacource.editthisTodo(data, baseUrl1);
-    //   if (response.statusCode == 200 || response.statusCode == 201) {
-    //     return "Success";
-    //   } else {
-    //     return "Failure in Updating Todo";
-    //   }
-    // }
   }
 }

@@ -1,38 +1,25 @@
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class TodoDatacource {
-  final http.Client client;
-  TodoDatacource(this.client);
+  final Dio dio;
+  TodoDatacource(this.dio);
   Future<dynamic> addthisTodo(String url, String body) async {
-    final response = http.post(
-      Uri.parse(url),
-      body: body,
-      headers: {"Content-Type": "Application/Json"},
-    );
-
+    final response = dio.post(url, data: body);
     return response;
   }
 
   Future<dynamic> deletethisTodo(String url, String body) async {
-    final response = client.delete(
-      Uri.parse(url),
-      body: body,
-      headers: {"Content-Type": "Application/Json"},
-    );
+    final response = dio.delete(url, data: body);
     return response;
   }
 
   Future<dynamic> getthisTodo(String url) async {
-    final response = client.get(Uri.parse(url));
+    final response = dio.get(url);
     return response;
   }
 
   Future<dynamic> editthisTodo(String body, String url) async {
-    final response = client.patch(
-      Uri.parse(url),
-      body: body,
-      headers: {"Content-Type": "Application/Json"},
-    );
+    final response = dio.patch(url, data: body);
     return response;
   }
 }
