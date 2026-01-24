@@ -1,4 +1,4 @@
-import 'package:clean_architecture/features/domain/repositories/todo_repository.dart';
+import 'package:todo/features/domain/repositories/todo_repository.dart';
 
 class GetAllTodo {
   TodoRepository repo;

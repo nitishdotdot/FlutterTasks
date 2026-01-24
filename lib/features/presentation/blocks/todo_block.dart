@@ -1,17 +1,26 @@
-import 'package:clean_architecture/features/data/data_source/todo_data_source.dart';
-import 'package:clean_architecture/features/data/repositories/todo_repository_implementation.dart';
-import 'package:clean_architecture/features/domain/usecases/edit_todo.dart';
-import 'package:clean_architecture/features/domain/usecases/get_all_todo.dart ';
-import 'package:clean_architecture/features/domain/usecases/add_todo.dart';
-import 'package:clean_architecture/features/domain/usecases/delete_todo.dart';
-import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
-import 'package:clean_architecture/features/presentation/blocks/todo_event.dart';
+import 'package:todo/features/data/data_source/todo_data_source.dart';
+import 'package:todo/features/data/repositories/todo_repository_implementation.dart';
+import 'package:todo/features/domain/usecases/edit_todo.dart';
+import 'package:todo/features/domain/usecases/get_all_todo.dart ';
+import 'package:todo/features/domain/usecases/add_todo.dart';
+import 'package:todo/features/domain/usecases/delete_todo.dart';
+import 'package:todo/features/domain/entities/todo_entity.dart';
+import 'package:todo/features/presentation/blocks/todo_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:clean_architecture/features/presentation/blocks/todo_state.dart';
-import 'package:http/http.dart' as http;
+import 'package:todo/features/presentation/blocks/todo_state.dart';
+import 'package:todo/injection_container.dart';
 
 class TodoBlock extends Bloc<TodoEvent, TodoState> {
-  TodoBlock() : super(TodoInitial()) {
+  final GetAllTodo getAllTodo;
+  final AddTodo addTodo;
+  final DeleteTodo deleteTodo;
+  final EditTodo editTodo;
+  TodoBlock({
+    required this.getAllTodo,
+    required this.addTodo,
+    required this.deleteTodo,
+    required this.editTodo,
+  }) : super(TodoInitial()) {
     on<GetAllTodoEvent>(_onGetAllTodoEvent);
     on<AddTodoEvent>(_onAddTodoEvent);
     on<DeleteTodoEvent>(_onDeleteTodoEvent);
@@ -22,11 +31,7 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     emit(TodoLoading());
-    final client = http.Client();
-    final TodoDatacource todoDatacource = TodoDatacource(client);
-    final TodoRepositoryImplementation todoRepositoryImplementation =
-        TodoRepositoryImplementation(todoDatacource);
-    final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
+    final getAllTodo = s1<GetAllTodo>();
     final fetchedTodos = await getAllTodo();
     emit(TodoLoaded(fetchedTodos));
   }
@@ -36,17 +41,13 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     emit(TodoLoading());
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation todoRepositoryImplementation =
-        TodoRepositoryImplementation(datasource);
-    final AddTodo todoUsecase = AddTodo(todoRepositoryImplementation);
+    final addTodo = s1<AddTodo>();
     final todoValue = TodoEntity(
       title: event.title,
       description: event.description,
     );
-    final String stringResponse = await todoUsecase(todoValue);
-    final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
+    await addTodo(todoValue);
+    final getAllTodo = s1<GetAllTodo>();
     final fetchedTodos = await getAllTodo();
     emit(TodoLoaded(fetchedTodos));
   }
@@ -56,13 +57,9 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     emit(TodoLoading());
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation todoRepositoryImplementation =
-        TodoRepositoryImplementation(datasource);
-    final DeleteTodo todoUsecase = DeleteTodo(todoRepositoryImplementation);
-    final String stringReponse = await todoUsecase(event.id);
-    final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
+    final deleteTodo = s1<DeleteTodo>();
+    await deleteTodo(event.id);
+    final getAllTodo = s1<GetAllTodo>();
     final fetchedTodos = await getAllTodo();
     emit(TodoLoaded(fetchedTodos));
   }
@@ -72,17 +69,13 @@ class TodoBlock extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     emit(TodoLoading());
-    final client = http.Client();
-    final datasource = TodoDatacource(client);
-    final TodoRepositoryImplementation todoRepositoryImplementation =
-        TodoRepositoryImplementation(datasource);
-    final EditTodo todoUsecase = EditTodo(todoRepositoryImplementation);
+    final editTodo = s1<EditTodo>();
     final todoValue = TodoEntity(
       title: event.title,
       description: event.description,
     );
-    final String stringReponse = await todoUsecase(todoValue, event.id);
-    final GetAllTodo getAllTodo = GetAllTodo(todoRepositoryImplementation);
+    await editTodo(todoValue, event.id);
+    final getAllTodo = s1<GetAllTodo>();
     final fetchedTodos = await getAllTodo();
     emit(TodoLoaded(fetchedTodos));
   }

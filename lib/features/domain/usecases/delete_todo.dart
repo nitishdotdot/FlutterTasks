@@ -1,9 +1,9 @@
-import 'package:clean_architecture/features/domain/repositories/todo_repository.dart';
+import 'package:todo/features/domain/repositories/todo_repository.dart';
 
 class DeleteTodo {
   TodoRepository repo;
   DeleteTodo(this.repo);
-  Future<String> call(String id) async {
-    return await repo.deleteTodo(id);
+  Future<void> call(String id) async {
+    await repo.deleteTodo(id);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
+import 'package:todo/features/domain/entities/todo_entity.dart';
 
 class TodoModel extends TodoEntity {
   const TodoModel({String? id, String? title, String? description})

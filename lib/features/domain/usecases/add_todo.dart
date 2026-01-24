@@ -1,10 +1,10 @@
-import 'package:clean_architecture/features/domain/entities/todo_entity.dart';
-import 'package:clean_architecture/features/domain/repositories/todo_repository.dart';
+import 'package:todo/features/domain/entities/todo_entity.dart';
+import 'package:todo/features/domain/repositories/todo_repository.dart';
 
 class AddTodo {
   final TodoRepository repo;
   AddTodo(this.repo);
-  Future<String> call(TodoEntity todo) async {
-    return await repo.addTodo(todo);
+  Future<void> call(TodoEntity todo) async {
+    await repo.addTodo(todo);
   }
 }
